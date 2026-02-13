@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gala Licores - Iniciar Sesión</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="bg-mesh"></div>
+
+  <div class="auth-page">
+    <div class="auth-wrapper glass-container">
+      <div class="auth-header">
+        <div class="logo-icon">
+          <img src="/assets/logo.png" alt="Gala Licores">
+        </div>
+        <h1 class="gradient-text">Bienvenido</h1>
+        <p class="text-secondary">Inicia sesión para continuar</p>
+      </div>
+
+      <div id="alertContainer"></div>
+
+      <form id="loginForm">
+        <div class="premium-input-group">
+          <label for="email" class="premium-label">Email</label>
+          <div class="premium-input-wrapper">
+            <input type="email" id="email" name="email" class="premium-input" placeholder="tu@email.com" required
+              autocomplete="email">
+          </div>
+        </div>
+
+        <div class="premium-input-group">
+          <label for="password" class="premium-label">Contraseña</label>
+          <div class="premium-input-wrapper">
+            <input type="password" id="password" name="password" class="premium-input" placeholder="••••••••" required
+              autocomplete="current-password">
+            <span class="input-icon" id="togglePassword">👁️</span>
+          </div>
+        </div>
+
+        <div class="mb-8" style="display: flex; align-items: center; gap: 0.75rem;">
+          <input type="checkbox" id="rememberMe" name="rememberMe"
+            style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+          <label for="rememberMe" class="text-sm text-secondary"
+            style="cursor: pointer; user-select: none;">Recordarme</label>
+        </div>
+
+        <button type="submit" class="premium-btn premium-btn-primary" id="loginBtn">
+          <span>Iniciar Sesión</span>
+        </button>
+      </form>
+
+      <div class="text-center mt-4">
+        <p class="text-sm text-secondary">
+          ¿No tienes una cuenta? <a href="/register.html" class="font-bold"
+            style="color: var(--primary); text-decoration: none; margin-left: 5px;">Regístrate aquí</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+
+</html>

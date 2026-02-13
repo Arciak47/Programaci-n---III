@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gala Licores - Catálogo Premium</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Cart Styles */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-glass);
+            z-index: 1000;
+            transition: var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(45, 35, 22, 0.1);
+        }
+
+        .cart-drawer.active {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(45, 35, 22, 0.05);
+            align-items: center;
+        }
+
+        .cart-item-img {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            background: #f9f6f0;
+            border: 1px solid var(--border-glass);
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-footer {
+            padding: 2rem;
+            background: #fdfbf7;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+        }
+
+        .cart-overlay.active {
+            display: block;
+        }
+
+        .cart-badge-nav {
+            background: #ff0000;
+            color: white;
+            font-size: 0.9rem;
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 900;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+            border: 1px solid white;
+            margin-left: -10px;
+            z-index: 10;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-weight: 700;
+            z-index: 2000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+
+<body>
+    <div class="bg-mesh"></div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <div>
+                <h2 class="gradient-text">Tu Carrito 🛒</h2>
+                <button class="premium-btn"
+                    style="width: auto; padding: 0.25rem 0.75rem; font-size: 0.7rem; margin-top: 0.5rem; background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.3); color: #ff4d4d;"
+                    onclick="clearCart()">Vaciar Carrito</button>
+            </div>
+            <button class="premium-btn-secondary" style="width: auto; padding: 0.5rem;"
+                onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items del carrito -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalValue">$0.00</span>
+            </div>
+            <button class="premium-btn premium-btn-primary" onclick="checkout()">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <span>✅</span>
+        <span id="toastMessage"></span>
+    </div>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+        <nav
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4rem; padding: 1rem 0; border-bottom: 1px solid var(--border-glass);">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <img src="/assets/logo.png" alt="Gala Licores" style="height: 65px; width: auto;">
+            </div>
+
+            <div id="navActions" style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Cargando estado de auth... -->
+            </div>
+        </nav>
+
+        <header class="text-center mb-8">
+            <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Licores Premium</h1>
+            <p class="text-secondary" style="font-size: 1.25rem;">Descubre nuestra exclusiva selección de destilados</p>
+
+            <div style="max-width: 600px; margin: 3rem auto 1.5rem; position: relative;">
+                <input type="text" id="searchInput" class="premium-input"
+                    placeholder="Buscar por nombre, código o descripción..."
+                    style="padding-left: 3rem; background: white; border: 1px solid var(--border-glass);">
+                <span
+                    style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">🔍</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-4" id="productsGrid">
+            <!-- Productos se cargarán aquí -->
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        const API_URL = '/api';
+        let allProducts = [];
+        let cart = []; // Se inicializará en initAuth
+        let CART_KEY = 'cart_guest'; // Valor por defecto
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.children[1].textContent = message;
+            toast.classList.add('active');
+
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initAuth();
+            loadProducts();
+            updateCartUI();
+
+            // Búsqueda en tiempo real
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const search = e.target.value.toLowerCase();
+                const filtered = allProducts.filter(p =>
+                    p.name.toLowerCase().includes(search) ||
+                    p.code.toLowerCase().includes(search) ||
+                    (p.description && p.description.toLowerCase().includes(search))
+                );
+                displayProducts(filtered);
+            });
+        });
+
+        // --- Auth & Nav ---
+        async function initAuth() {
+            const navActions = document.getElementById('navActions');
+
+            if (!AuthService.isAuthenticated()) {
+                navActions.innerHTML = `
+                    <button onclick="window.location.href='/login.html'" class="premium-btn premium-btn-secondary" style="width: auto; padding: 0.5rem 1.5rem;">Entrar</button>
+                    <button onclick="window.location.href='/register.html'" class="premium-btn premium-btn-primary" style="width: auto; padding: 0.5rem 1.5rem;">Registrarse</button>
+                `;
+                // For guests, ensure cart is loaded from default key
+                cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                return;
+            }
+
+            try {
+                // Mostrar info básica mientras carga el perfil fresco
+                let user = AuthService.getUser();
+                if (user) {
+                    // Generar clave única de carrito para este usuario
+                    CART_KEY = `cart_${user._id || user.id}`;
+                    cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                    updateNav(user); // Update nav with initial user info and cart badge
+                }
+
+                // Sincronizar con el servidor para obtener cambios de rol
+                user = await AuthService.getProfile();
+                if (user) {
+                    // Re-generate key and load cart in case user changed (e.g., guest to logged in)
+                    CART_KEY = `cart_${user._id || user.id}`;
+                    cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                    updateNav(user); // Update nav with fresh user info and cart badge
+                }
+            } catch (error) {
+                console.error('Error de auth:', error);
+                AuthService.logout();
+                // After logout, reset to guest cart
+                CART_KEY = 'cart_guest';
+                cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                updateNav(null); // Clear nav or show guest options
+            }
+        }
+
+        function updateNav(user) {
+            const navActions = document.getElementById('navActions');
+
+            if (!user) {
+                navActions.innerHTML = `
+                    <button onclick="window.location.href='/login.html'" class="premium-btn premium-btn-secondary" style="width: auto; padding: 0.5rem 1.5rem;">Entrar</button>
+                    <button onclick="window.location.href='/register.html'" class="premium-btn premium-btn-primary" style="width: auto; padding: 0.5rem 1.5rem;">Registrarse</button>
+                `;
+                return;
+            }
+
+            const isAdmin = user.role === 'admin';
+            navActions.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; margin-right: 1rem; padding-right: 1rem; border-right: 1px solid var(--border-glass);">
+                    <div style="text-align: right;">
+                        <div class="font-bold" style="color: var(--secondary);">${user.username}</div>
+                        <div style="font-size: 0.7rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800;">
+                            ${isAdmin ? 'ADMINISTRADOR' : 'CLIENTE PREMIUM'}
+                        </div>
+                    </div>
+                </div>
+                ${isAdmin ? '<button onclick="window.location.href=\'/admin-products.html\'" class="premium-btn premium-btn-secondary" style="width: auto; padding: 0.5rem 1.25rem;">🛠️ Panel Admin</button>' : ''}
+                <div style="display: flex; align-items: center; gap: 0;">
+                    <button onclick="toggleCart()" class="premium-btn premium-btn-secondary" style="width: auto; padding: 0.5rem 1.25rem; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                        🛒 Carrito
+                    </button>
+                    <span id="cartBadge" class="cart-badge-nav">${cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                </div>
+                <button onclick="AuthService.logout()" class="premium-btn premium-btn-danger" style="width: auto; padding: 0.5rem 1.25rem;">Salir</button>
+            `;
+        }
+
+        // --- Cart Logic ---
+        function toggleCart() {
+            document.getElementById('cartDrawer').classList.toggle('active');
+            document.getElementById('cartOverlay').classList.toggle('active');
+        }
+
+        function addToCart(productId) {
+            const product = allProducts.find(p => p._id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item._id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            saveCart();
+            updateCartUI();
+
+            // Añadir un feedback visual sutil en lugar de abrir el carrito
+            showToast(`Añadido: ${product.name}`);
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item._id !== productId);
+            saveCart();
+            updateCartUI();
+        }
+
+        function updateQuantity(productId, delta) {
+            const item = cart.find(i => i._id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            }
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const totalValueSpan = document.getElementById('cartTotalValue');
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-muted text-center" style="margin-top: 3rem;">El carrito está vacío 🍾</p>';
+                totalValueSpan.textContent = '$0.00';
+                return;
+            }
+
+            let total = 0;
+            cartItemsContainer.innerHTML = cart.map(item => {
+                const subtotal = item.price * item.quantity;
+                total += subtotal;
+                return `
+                    <div class="cart-item">
+                        <img src="${item.image || ''}" class="cart-item-img" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${item.name}</h4>
+                            <div style="font-size: 0.8rem; color: var(--accent);">$${item.price.toFixed(2)} x ${item.quantity}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                            <div style="font-weight: 700;">$${subtotal.toFixed(2)}</div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="updateQuantity('${item._id}', -1)" style="background: white; border: 1px solid var(--border-glass); color: var(--text-primary); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: var(--transition-fast);">–</button>
+                                <button onclick="updateQuantity('${item._id}', 1)" style="background: white; border: 1px solid var(--border-glass); color: var(--text-primary); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: var(--transition-fast);">+</button>
+                                <button onclick="removeFromCart('${item._id}')" style="background: none; border: none; color: var(--error); cursor: pointer; margin-left: 0.5rem;">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            totalValueSpan.textContent = `$${total.toFixed(2)}`;
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            alert('¡Gracias por tu compra! (Simulación de pago)');
+            clearCart(false);
+            toggleCart();
+        }
+
+        function clearCart(confirmFirst = true) {
+            if (confirmFirst && !confirm('¿Estás seguro de que deseas vaciar el carrito?')) return;
+            cart = [];
+            saveCart();
+            updateCartUI();
+        }
+
+        // --- Product Display ---
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+
+                if (data.success) {
+                    allProducts = data.products;
+                    displayProducts(allProducts);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 5rem;">
+                        <span style="font-size: 4rem; display: block; margin-bottom: 2rem; opacity: 0.2;">🍷</span>
+                        <h3 style="color: var(--text-secondary);">No se encontraron productos</h3>
+                        <p class="text-muted">Intenta buscar con otros términos</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = products.map(product => `
+                <div class="premium-card">
+                    <div class="card-image-wrapper">
+                        ${product.image ?
+                    `<img src="${product.image}" alt="${product.name}">` :
+                    '<span style="font-size: 5rem; opacity: 0.2;">🍾</span>'}
+                        <div class="card-badge">${product.code}</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${product.name}</h3>
+                        <p class="text-secondary text-sm" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.8rem;">
+                            ${product.description || 'Una selección exclusiva de nuestra cava premium.'}
+                        </p>
+                        <div class="card-price">$${product.price.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</div>
+                        <button class="premium-btn premium-btn-primary mt-4" onclick="addToCart('${product._id}')">
+                            Añadir al carrito 🛒
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            AuthService.logout();
+        }
+
+        function viewProduct(id) {
+            alert('Funcionalidad de ver detalles próximamente');
+        }
+    </script>
+</body>
+
+</html>

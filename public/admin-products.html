@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gala Licores - Administración</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="bg-mesh"></div>
+
+    <div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <img src="/assets/logo.png" alt="Gala Licores" style="height: 70px; width: auto;">
+                <div>
+                    <h1 class="gradient-text" style="font-size: 2.5rem;">Gestión de Inventario</h1>
+                    <p class="text-secondary">Control de productos y catálogo</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="window.location.href='/catalog.html'" class="premium-btn premium-btn-secondary"
+                    style="width: auto;">Ver Catálogo</button>
+                <button onclick="logout()" class="premium-btn premium-btn-danger" style="width: auto;">Cerrar
+                    Sesión</button>
+            </div>
+        </header>
+
+        <div class="grid" style="grid-template-columns: 400px 1fr; align-items: start;">
+            <!-- Formulario de Crear/Editar Producto -->
+            <aside class="glass-container" style="position: sticky; top: 6rem; padding: 2rem;">
+                <h2 id="formTitle" class="gradient-text mb-4" style="font-size: 1.5rem;">Nuevo Producto</h2>
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+
+                    <div class="premium-input-group">
+                        <label for="productName" class="premium-label">Nombre del Producto *</label>
+                        <input type="text" id="productName" class="premium-input" required
+                            placeholder="Ej: Macallan 12 Años">
+                    </div>
+
+                    <div class="premium-input-group">
+                        <label for="productCode" class="premium-label">Código *</label>
+                        <input type="text" id="productCode" class="premium-input" required placeholder="Ej: WH-001">
+                    </div>
+
+                    <div class="premium-input-group">
+                        <label for="productPrice" class="premium-label">Precio ($) *</label>
+                        <input type="number" id="productPrice" class="premium-input" step="0.01" min="0" required
+                            placeholder="0.00">
+                    </div>
+
+                    <div class="premium-input-group">
+                        <label for="productImage" class="premium-label">Imagen</label>
+                        <input type="file" id="productImage" class="premium-input" accept="image/*"
+                            style="font-size: 0.8rem;">
+                        <div id="imagePreview"
+                            style="margin-top: 1rem; aspect-ratio: 16/9; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border: 2px dashed var(--border-glass); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <span class="text-muted">Vista previa</span>
+                        </div>
+                    </div>
+
+                    <div class="premium-input-group">
+                        <label for="productDescription" class="premium-label">Descripción</label>
+                        <textarea id="productDescription" class="premium-input" rows="3"
+                            placeholder="Descripción breve del producto..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="premium-btn premium-btn-primary">Guardar</button>
+                        <button type="button" onclick="resetForm()"
+                            class="premium-btn premium-btn-secondary">Limpiar</button>
+                    </div>
+                </form>
+            </aside>
+
+            <!-- Lista de Productos -->
+            <main>
+                <div class="glass-container" style="padding: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.5rem;">Productos en Catálogo</h2>
+                        <span id="productCount" class="text-muted text-sm">Cargando...</span>
+                    </div>
+
+                    <div class="grid grid-cols-3" id="productsGrid">
+                        <!-- Los productos se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin-products.js"></script>
+</body>
+
+</html>
