@@ -5,6 +5,13 @@ const User = require('../models/User');
 
 // Generar JWT token
 const generateToken = (user) => {
+    if (!process.env.JWT_SECRET) {
+        console.error('CRITICAL: JWT_SECRET no está definida en las variables de entorno');
+    }
+    if (!process.env.JWT_EXPIRES_IN) {
+        console.warn('WARNING: JWT_EXPIRES_IN no está definida, usando valor por defecto: 24h');
+    }
+
     return jwt.sign(
         {
             id: user._id,
@@ -12,8 +19,8 @@ const generateToken = (user) => {
             email: user.email,
             role: user.role || 'customer'
         },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN }
+        process.env.JWT_SECRET || 'fallback_secret_only_for_debug',
+        { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 };
 
