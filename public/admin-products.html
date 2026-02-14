@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gala Licores - Administración</title>
+    <title>Raíces Frescas - Administración</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -14,7 +15,9 @@
     <div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
             <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <img src="/assets/logo.png" alt="Gala Licores" style="height: 70px; width: auto;">
+                <img src="/assets/logo.png?v=2" alt="Raíces Frescas" style="height: 70px; width: auto;">
+
+
                 <div>
                     <h1 class="gradient-text" style="font-size: 2.5rem;">Gestión de Inventario</h1>
                     <p class="text-secondary">Control de productos y catálogo</p>
@@ -38,12 +41,14 @@
                     <div class="premium-input-group">
                         <label for="productName" class="premium-label">Nombre del Producto *</label>
                         <input type="text" id="productName" class="premium-input" required
-                            placeholder="Ej: Macallan 12 Años">
+                            placeholder="Ej: Tomate Manzano">
+
                     </div>
 
                     <div class="premium-input-group">
                         <label for="productCode" class="premium-label">Código *</label>
-                        <input type="text" id="productCode" class="premium-input" required placeholder="Ej: WH-001">
+                        <input type="text" id="productCode" class="premium-input" required placeholder="Ej: FV-001">
+
                     </div>
 
                     <div class="premium-input-group">
@@ -51,6 +56,16 @@
                         <input type="number" id="productPrice" class="premium-input" step="0.01" min="0" required
                             placeholder="0.00">
                     </div>
+
+                    <div class="premium-input-group">
+                        <label for="productCategory" class="premium-label">Categoría *</label>
+                        <select id="productCategory" class="premium-input" required>
+                            <option value="" disabled selected>Seleccionar...</option>
+                            <option value="Fruta">Fruta</option>
+                            <option value="Verdura">Verdura</option>
+                        </select>
+                    </div>
+
 
                     <div class="premium-input-group">
                         <label for="productImage" class="premium-label">Imagen</label>
@@ -81,13 +96,27 @@
                 <div class="glass-container" style="padding: 2rem;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <h2 style="font-size: 1.5rem;">Productos en Catálogo</h2>
+                        <h2 style="font-size: 1.5rem;">Lista de Productos</h2>
                         <span id="productCount" class="text-muted text-sm">Cargando...</span>
                     </div>
 
-                    <div class="grid grid-cols-3" id="productsGrid">
-                        <!-- Los productos se cargarán aquí dinámicamente -->
+                    <div class="table-responsive">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>PRODUCTO</th>
+                                    <th>CÓDIGO</th>
+                                    <th>PRECIO</th>
+                                    <th>CATEGORÍA</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Los productos se cargarán aquí -->
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
             </main>
         </div>

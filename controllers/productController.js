@@ -3,15 +3,17 @@ const Product = require('../models/Product');
 // Crear producto (solo admin)
 const createProduct = async (req, res) => {
     try {
-        const { name, code, price, description } = req.body;
+        const { name, code, price, description, category } = req.body;
+
 
         // Validar campos requeridos
-        if (!name || !code || !price) {
+        if (!name || !code || !price || !category) {
             return res.status(400).json({
                 success: false,
-                message: 'Nombre, código y precio son requeridos'
+                message: 'Nombre, código, precio y categoría son requeridos'
             });
         }
+
 
         // Verificar si el código ya existe
         const existingProduct = await Product.findOne({ code: code.toUpperCase() });
@@ -28,8 +30,10 @@ const createProduct = async (req, res) => {
             code: code.toUpperCase(),
             price,
             description,
+            category,
             createdBy: req.user.id
         });
+
 
         res.status(201).json({
             success: true,
@@ -95,7 +99,8 @@ const getProductById = async (req, res) => {
 // Actualizar producto (solo admin)
 const updateProduct = async (req, res) => {
     try {
-        const { name, code, price, description } = req.body;
+        const { name, code, price, description, category } = req.body;
+
 
         const product = await Product.findById(req.params.id);
 
@@ -111,8 +116,10 @@ const updateProduct = async (req, res) => {
         if (code) product.code = code.toUpperCase();
         if (price !== undefined) product.price = price;
         if (description !== undefined) product.description = description;
+        if (category) product.category = category;
 
         await product.save();
+
 
         res.json({
             success: true,

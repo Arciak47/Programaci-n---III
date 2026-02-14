@@ -1,7 +1,7 @@
 {
   "name": "auth-system",
   "version": "1.0.0",
-  "description": "Sistema E-commerce Premium para Gala Licores",
+  "description": "Sistema E-commerce Premium para Raíces Frescas (Frutas y Verduras)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

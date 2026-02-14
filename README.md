@@ -1,110 +1,82 @@
-# Gala Licores - Sistema E-commerce Premium
+# Raíces Frescas - Frutas y Verduras de Calidad 🥦🍎
 
-[![Deployment](https://img.shields.io/badge/Render-Deployed-success?logo=render&logoColor=white)](https://render.com)
 [![Node.js](https://img.shields.io/badge/Node.js-18.x-green?logo=node.js)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Este proyecto es una plataforma de comercio electrónico de lujo para **Gala Licores**, desarrollada como proyecto final. El sistema integra autenticación segura, gestión de inventario y un sistema de carrito de compras persistente.
+Plataforma de comercio electrónico diseñada para la gestión y venta de productos agrícolas frescos. Este proyecto implementa una arquitectura robusta de **Node.js + Express** con seguridad basada en **JWT** y persistencia en **MongoDB Atlas**.
 
 ---
 
 ## 📌 Tabla de Contenidos
-1. [Resumen de Entregas](#-resumen-de-entregas)
-2. [Instalación y Configuración](#-instalación-y-configuración)
-3. [Evaluación 2: Autenticación](#-evaluación-2-autenticación)
-4. [Evaluación 3: Catálogo y CRUD](#-evaluación-3-catálogo-y-crud)
-5. [Evaluación 4: Carrito y Sesiones](#-evaluación-4-carrito-y-sesiones)
-6. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
+1. [Instalación y Configuración](#-instalación-y-configuración)
+2. [Hitos del Proyecto (Evaluaciones)](#-hitos-del-proyecto-evaluaciones)
+3. [Guía de Pruebas](#-guía-de-pruebas)
+4. [Seguridad y Tecnologías](#-seguridad-y-tecnologías)
 
 ---
 
-## 🚀 Resumen de Entregas
+## � Instalación y Configuración
 
-El repositorio está organizado mediante **Git Tags** para facilitar la revisión de cada hito evaluativo:
+### 1. Requisitos Previos
+- Node.js v16+ instalado.
+- Cuenta en MongoDB Atlas con una base de datos creada.
 
-| Evaluación | Tag | Descripción Principal |
-| :--- | :--- | :--- |
-| **E2: Auth** | `v2.0-auth` | Login, Registro, JWT, Bcrypt. |
-| **E3: CRUD** | `v3.0-products` | Gestión de productos y Roles (Admin/User). |
-| **E4: Cart** | `v4.0-cart` | Carrito persistente y totalización. |
-
----
-
-## 🛠 Instalación y Configuración
-
-### 1. Clonar y Dependencias
+### 2. Pasos de Instalación
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
 cd auth-system
 npm install
 ```
 
-### 2. Variables de Entorno
-Crea un archivo `.env` basado en `.env.example`:
+### 3. Variables de Envorno (.env)
+Crea un archivo `.env` en la raíz con el siguiente formato:
 ```env
 PORT=3000
-MONGODB_URI=tu_uri_de_mongodb_atlas
-JWT_SECRET=clave_secreta_para_tokens
+MONGODB_URI=tu_cadena_de_conexion_mongo_atlas
+JWT_SECRET=tu_clave_secreta_privada
+JWT_EXPIRES_IN=24h
 ```
 
 ---
 
-## 🔐 Evaluación 2: Autenticación
-**Objetivo:** Sistema de acceso seguro.
+## � Hitos del Proyecto (Evaluaciones)
 
-### Características implementadas:
-- **Registro**: Formulario con validación de fuerza de contraseña y duplicados.
-- **Login**: Autenticación basada en **JWT (JSON Web Token)**.
-- **Seguridad**: Contraseñas encriptadas con **Bcryptjs** (Salt rounds: 10).
-- **Protección**: Middleware de autenticación para rutas privadas.
+El repositorio utiliza **Git Tags** para facilitar la revisión histórica de cada entrega:
 
-### Cómo probar:
-1. Ve a `/register.html` y crea una cuenta.
-2. Inicia sesión en `/login.html`.
-3. Revisa la consola del navegador (`Local Storage`) para ver el token generado.
+| Evaluación | Tag | Descripción Principal |
+| :--- | :--- | :--- |
+| **E2: Autenticación** | `v2.0-auth` | Sistema de login seguro, registros y encriptación de claves. |
+| **E3: CRUD** | `v3.0-products` | Gestión de inventario, roles (Admin/User) y carga de imágenes. |
+| **E4: Carrito** | `v4.0-complete` | Carrito de compras persistente y flujo de checkout final. |
 
 ---
 
-## 📦 Evaluación 3: Catálogo y CRUD
-**Objetivo:** Gestión de productos y roles.
+## 🧪 Guía de Pruebas
 
-### Características implementadas:
-- **CRUD Completo**: El Administrador puede Crear, Leer, Actualizar y Eliminar productos.
-- **Roles y Permisos**: 
-  - `Admin`: Acceso al panel `/admin-products.html`.
-  - `User`: Solo puede ver el catálogo y comprar.
-- **Validaciones**: Control de tipos de datos en el servidor (Express-validator).
+### Evaluación 2: Login y Seguridad
+- **Registro**: Acceder a `/register.html`. Las contraseñas se almacenan usando **Bcryptjs**.
+- **Autenticación**: Acceder a `/login.html`. Tras el éxito, se genera un **JWT** almacenado en `LocalStorage`.
+- **Protección**: Las rutas de la API bajo `/api/auth/profile` requieren el token en los headers.
 
-### Cómo probar:
-1. Accede con un usuario con rol `admin`.
-2. Ve al panel de administración y sube un nuevo producto con imagen.
-3. Verifica que el producto aparece instantáneamente en el catálogo público.
+### Evaluación 3: Productos e Inventario
+- **Roles**: 
+  - `Admin`: Puede acceder a `/admin-products.html` para crear, editar y eliminar.
+  - `User`: Acceso solo al `/catalog.html` para visualización.
+- **Imagen**: Soporte para subida de imágenes locales o enlaces (ver `/uploads`).
 
----
-
-## 🛒 Evaluación 4: Carrito y Sesiones
-**Objetivo:** Experiencia de compra completa.
-
-### Características implementadas:
-- **Carrito Persistente**: Uso de `LocalStorage` segmentado por `User_ID`. Cada usuario tiene su propio carrito privado.
-- **Gestión de Cantidades**: Botones de añadir/restar items con cálculo en tiempo real.
-- **Totalización**: Desglose de precios y total final en el drawer del carrito.
-- **Feedback**: Sistema de Notificaciones (Toasts) al agregar productos.
-
-### Cómo probar:
-1. Agrega varios licores al carrito.
-2. Abre el carrito y ajusta las cantidades (verás que el total se actualiza).
-3. Cierra sesión e inicia con otro usuario: **el carrito estará vacío**, demostrando el aislamiento de sesiones.
+### Evaluación 4: Carrito y Operaciones
+- **Persistencia**: El carrito se guarda en `LocalStorage` vinculado al ID único del usuario.
+- **Operaciones**: Botones de `+`, `–` y `Vaciar Carrito` con recálculo automático del total.
+- **Simulación de Pago**: Botón de finalizar compra con feedback visual (Toasts).
 
 ---
 
-## 💻 Tecnologías Utilizadas
+## 💻 Seguridad y Tecnologías
 
-- **Backend**: Node.js, Express.
-- **Frontend**: HTML5, Vanilla CSS (Premium Light Theme), JavaScript ES6.
-- **Base de Datos**: MongoDB Atlas (Mongoose).
-- **Seguridad**: JWT, Bcrypt, Helmet, CORS, Rate-Limit.
-- **Despliegue**: Render.
+- **Capa de Seguridad**: Helmet.js (HTTP headers), Express-Rate-Limit, CORS.
+- **Middleware**: Validación de esquemas con Mongoose.
+- **Frontend**: Vanilla JS (ES6) con arquitectura de componentes moderna y diseño **Premium Dark Mode**.
 
 ---
 

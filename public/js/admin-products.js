@@ -53,45 +53,51 @@ async function loadProducts() {
 
 // Mostrar productos
 function displayProducts(products) {
-    const grid = document.getElementById('productsGrid');
+    const tableBody = document.getElementById('productsTableBody');
     const countSpan = document.getElementById('productCount');
 
     if (countSpan) {
-        countSpan.textContent = `${products.length} producto(s) en total`;
+        countSpan.textContent = `Total: ${products.length} productos`;
     }
 
     if (products.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                <p class="text-muted">No hay productos registrados</p>
-            </div>`;
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 3rem; color: #888;">
+                    No hay productos registrados
+                </td>
+            </tr>`;
         return;
     }
 
-    grid.innerHTML = products.map(product => `
-        <div class="premium-card">
-            <div class="card-image-wrapper" style="aspect-ratio: 1; height: 180px;">
-                ${product.image ?
-            `<img src="${product.image}" alt="${product.name}">` :
-            '<span style="font-size: 3rem; opacity: 0.2;">🍾</span>'}
-                <div class="card-badge" style="font-size: 0.6rem;">${product.code}</div>
-            </div>
-            <div class="card-content" style="padding: 1rem;">
-                <h3 class="card-title" style="font-size: 1rem; margin-bottom: 0.25rem;">${product.name}</h3>
-                <div class="card-price" style="font-size: 1.25rem; margin-top: 0.5rem;">$${product.price.toFixed(2)}</div>
-                
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                    <button class="premium-btn premium-btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="editProduct('${product._id}')">
-                        Editar
+    tableBody.innerHTML = products.map(product => `
+        <tr>
+            <td>
+                <div class="table-product-info">
+                    <img src="${product.image || '/assets/placeholder-produce.png'}" alt="${product.name}" class="table-product-img">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-primary);">${product.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${product.description ? product.description.substring(0, 40) + '...' : 'Fruta/Verdura fresca'}</div>
+                    </div>
+                </div>
+            </td>
+            <td style="color: var(--text-muted); font-family: monospace;">${product.code}</td>
+            <td style="font-weight: 700; color: var(--text-primary);">$${product.price.toFixed(2)}</td>
+            <td><span style="background: rgba(46, 204, 113, 0.1); color: var(--primary); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(46, 204, 113, 0.2);">${product.category || 'Verdura'}</span></td>
+            <td>
+                <div class="action-btns">
+                    <button class="btn-icon btn-edit" onclick="editProduct('${product._id}')">
+                        <span style="font-size: 1rem;">✏️</span> Editar
                     </button>
-                    <button class="premium-btn premium-btn-danger" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="deleteProduct('${product._id}', '${product.name}')">
-                        Borrar
+                    <button class="btn-icon btn-delete" onclick="deleteProduct('${product._id}', '${product.name}')">
+                        <span style="font-size: 1rem;">🗑️</span> Eliminar
                     </button>
                 </div>
-            </div>
-        </div>
+            </td>
+        </tr>
     `).join('');
 }
+
 
 // Crear/actualizar producto
 document.getElementById('productForm').addEventListener('submit', async (e) => {
@@ -101,12 +107,15 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
     const name = document.getElementById('productName').value;
     const code = document.getElementById('productCode').value;
     const price = document.getElementById('productPrice').value;
+    const category = document.getElementById('productCategory').value;
     const description = document.getElementById('productDescription').value;
+
     const imageFile = document.getElementById('productImage').files[0];
 
     try {
         // Crear o actualizar producto
-        const productData = { name, code, price, description };
+        const productData = { name, code, price, description, category };
+
 
         let response;
         if (currentProductId) {
@@ -176,7 +185,9 @@ async function editProduct(id) {
             document.getElementById('productName').value = product.name;
             document.getElementById('productCode').value = product.code;
             document.getElementById('productPrice').value = product.price;
+            document.getElementById('productCategory').value = product.category || 'Verdura';
             document.getElementById('productDescription').value = product.description || '';
+
 
             if (product.image) {
                 document.getElementById('imagePreview').innerHTML =

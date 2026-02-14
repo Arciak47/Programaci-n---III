@@ -24,6 +24,13 @@ const productSchema = new mongoose.Schema({
         trim: true,
         maxlength: [500, 'La descripción no puede exceder 500 caracteres']
     },
+    category: {
+        type: String,
+        enum: ['Fruta', 'Verdura'],
+        required: [true, 'La categoría es requerida'],
+        default: 'Verdura'
+    },
+
     image: {
         type: String,
         default: null

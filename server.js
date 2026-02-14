@@ -67,8 +67,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`
 ╔═══════════════════════════════════════════════╗
-║   🚀 Gala Licores - Servidor Iniciado       ║
+║   🚀 Raíces Frescas - Servidor Iniciado       ║
 ╚═══════════════════════════════════════════════╝
+
+
 
 ✓ Servidor corriendo en: http://localhost:${PORT}
 ✓ Entorno: ${process.env.NODE_ENV || 'development'}

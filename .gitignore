@@ -16,9 +16,15 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Media/Uploads
+public/uploads/*
+!public/uploads/.gitkeep
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
