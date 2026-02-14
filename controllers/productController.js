@@ -31,7 +31,6 @@ const createProduct = async (req, res) => {
             price,
             description,
             category,
-            image: req.body.image, // Permitir URL directa
             createdBy: req.user.id
         });
 
@@ -118,7 +117,6 @@ const updateProduct = async (req, res) => {
         if (price !== undefined) product.price = price;
         if (description !== undefined) product.description = description;
         if (category) product.category = category;
-        if (req.body.image !== undefined) product.image = req.body.image; // Permitir URL directa
 
         await product.save();
 

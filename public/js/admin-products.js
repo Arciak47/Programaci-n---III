@@ -108,11 +108,13 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
     const code = document.getElementById('productCode').value;
     const price = document.getElementById('productPrice').value;
     const category = document.getElementById('productCategory').value;
-    const imageUrl = document.getElementById('productImageUrl').value;
+    const description = document.getElementById('productDescription').value;
+
+    const imageFile = document.getElementById('productImage').files[0];
 
     try {
         // Crear o actualizar producto
-        const productData = { name, code, price, description, category, image: imageUrl };
+        const productData = { name, code, price, description, category };
 
 
         let response;
@@ -185,7 +187,6 @@ async function editProduct(id) {
             document.getElementById('productPrice').value = product.price;
             document.getElementById('productCategory').value = product.category || 'Verdura';
             document.getElementById('productDescription').value = product.description || '';
-            document.getElementById('productImageUrl').value = (product.image && !product.image.startsWith('/uploads')) ? product.image : '';
 
 
             if (product.image) {
@@ -233,7 +234,6 @@ function resetForm() {
     currentProductId = null;
     document.getElementById('formTitle').textContent = 'Crear Nuevo Producto';
     document.getElementById('productForm').reset();
-    document.getElementById('productImageUrl').value = '';
     document.getElementById('imagePreview').innerHTML = '<span style="color: #888;">Sin imagen</span>';
 }
 

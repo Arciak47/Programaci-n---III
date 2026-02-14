@@ -19,8 +19,7 @@ Thumbs.db
 desktop.ini
 
 # Media/Uploads
-public/uploads/*
-!public/uploads/.gitkeep
+!public/uploads/
 
 # IDE
 .vscode/
